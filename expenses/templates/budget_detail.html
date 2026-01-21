@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% block title %}{{ budget.name }} - Expense Tracker{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Budget Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ budget.name }}</h1>
+        <span class="badge bg-primary fs-6">${{ budget.amount }}</span>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Edit Budget Form -->
+    <form method="post" class="mb-4 p-3 border rounded bg-light">
+        {% csrf_token %}
+        <input type="hidden" name="save_budget" value="1">
+        <div class="row">
+            <div class="col-md-8">{{ budget_form.name }}</div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    {{ budget_form.amount }}
+                    <button class="btn btn-outline-primary" type="submit">$ Update</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Goals Section -->
+    <h3>Goals</h3>
+    <form method="post" class="mb-4 p-3 border rounded bg-light">
+        {% csrf_token %}
+        <input type="hidden" name="save_goal" value="1">
+        <div class="row">
+            <div class="col-md-5">{{ goal_form.name }}</div>
+            <div class="col-md-5">{{ goal_form.target }}</div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-success w-100">Add Goal</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="row mb-4">
+        {% for goal in goals %}
+            <div class="col-md-6 mb-3">
+                <div class="card {% if goal.is_achieved %}border-success bg-light-success{% endif %}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <h6>{{ goal.name }}</h6>
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="delete_goal" value="{{ goal.id }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete?')">🗑️</button>
+                            </form>
+                        </div>
+                        <div class="mt-2">
+                            Saved: ${{ goal.saved }} / ${{ goal.target }}
+                            {% if goal.is_achieved %}
+                                <span class="badge bg-success ms-2">Achieved! 🎉</span>
+                            {% endif %}
+                        </div>
+                        {% if not goal.is_achieved %}
+                            <form method="post" class="mt-2">
+                                {% csrf_token %}
+                                <input type="hidden" name="goal_id" value="{{ goal.id }}">
+                                <input type="hidden" name="add_money" value="1">
+                                <div class="input-group input-group-sm">
+                                    <input type="number" name="amount" class="form-control" step="0.01" placeholder="Add $" required>
+                                    <button class="btn btn-outline-success" type="submit">Add $</button>
+                                </div>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-muted">No goals yet.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Transactions Section -->
+    <h3>Transactions</h3>
+    <form method="post" class="mb-4 p-3 border rounded bg-light">
+        {% csrf_token %}
+        <input type="hidden" name="save_trans" value="1">
+        <div class="row">
+            <div class="col-md-5">{{ trans_form.desc }}</div>
+            <div class="col-md-3">{{ trans_form.amount }}</div>
+            <div class="col-md-2 form-check">
+                {{ trans_form.is_income }}
+                <label class="form-check-label">Income</label>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Add Transaction</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Totals Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-center border-success">
+                <div class="card-body">
+                    <h5>Income</h5>
+                    <h3 class="text-success">${{ total_income|floatformat:2 }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center border-danger">
+                <div class="card-body">
+                    <h5>Expenses</h5>
+                    <h3 class="text-danger">${{ total_expenses|floatformat:2 }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center {% if net_amount >= 0 %}border-success{% else %}border-warning{% endif %}">
+                <div class="card-body">
+                    <h5>Net</h5>
+                    <h3 class="{% if net_amount >= 0 %}text-success{% else %}text-warning{% endif %}">${{ net_amount|floatformat:2 }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transactions Table -->
+    {% if transactions %}
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Type</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for trans in transactions %}
+                    <tr>
+                        <td>{{ trans.desc }}</td>
+                        <td>${{ trans.amount|floatformat:2 }}</td>
+                        <td>
+                            <span class="badge {% if trans.is_income %}bg-success{% else %}bg-danger{% endif %}">
+                                {% if trans.is_income %}Income{% else %}Expense{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="delete_trans" value="{{ trans.id }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete?')">🗑️</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="text-center text-muted py-4">No transactions yet</div>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">← Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}
