@@ -24,13 +24,6 @@ def register(request):
             return redirect('dashboard')
     return render(request, 'register.html', {'form': form_data})
 
-@login_required
-def toggle_dark_mode(request):
-    if 'dark_mode' in request.session:
-        request.session['dark_mode'] = not request.session['dark_mode']
-    else:
-        request.session['dark_mode'] = True
-    return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
 
 @login_required
 def dashboard(request):
@@ -144,7 +137,7 @@ def budget_detail(request, pk):
         if request.POST.get('delete_trans'):
             trans_id = request.POST.get('delete_trans')
             Transaction.objects.filter(id=trans_id, budget=budget_obj).delete()
-            transactions = Transaction.objects.filter(budget=budget_obj).order_by('-id')  # refreshing and sorting by id
+            transactions = Transaction.objects.filter(budget_obj).order_by('-id')  # refreshing and sorting by id
             print("TRANS DELETED")
             messages.info(request, 'Transaction deleted')
             return redirect('budget_detail', pk=pk)
