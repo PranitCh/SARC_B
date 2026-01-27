@@ -3,20 +3,15 @@
 
 {% block content %}
 <div class="container mt-4">
+    <div class="mb-4">
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">← Back to Dashboard</a>
+    </div>
+
     <!-- Budget Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>{{ budget.name }}</h1>
         <span class="badge bg-primary fs-6">${{ budget.amount }}</span>
     </div>
-
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
 
     <!-- Edit Budget Form -->
     <form method="post" class="mb-4 p-3 border rounded bg-light">
@@ -57,7 +52,7 @@
                             <form method="post" class="d-inline">
                                 {% csrf_token %}
                                 <input type="hidden" name="delete_goal" value="{{ goal.id }}">
-                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete?')">🗑️</button>
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirmDelete(event)">🗑️</button>
                             </form>
                         </div>
                         <div class="mt-2">
@@ -156,7 +151,7 @@
                             <form method="post" class="d-inline">
                                 {% csrf_token %}
                                 <input type="hidden" name="delete_trans" value="{{ trans.id }}">
-                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete?')">🗑️</button>
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirmDelete(event)">🗑️</button>
                             </form>
                         </td>
                     </tr>
@@ -166,9 +161,5 @@
     {% else %}
         <div class="text-center text-muted py-4">No transactions yet</div>
     {% endif %}
-
-    <div class="mt-4">
-        <a href="{% url 'dashboard' %}" class="btn btn-secondary">← Back to Dashboard</a>
-    </div>
 </div>
 {% endblock %}
