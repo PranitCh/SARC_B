@@ -35,12 +35,12 @@ function confirmDelete(event) {
     <style>
 /* Gradient Background */
 body {
-    background: linear-gradient(135deg, #a8c0ff 0%, #c8e6ff 50%, #fbc2eb 100%);
+    background: linear-gradient(135deg, #e9ecef 0%, #c8e6ff 50%, #ffffff 100%);
     min-height: 100vh;
 }
 
 [data-bs-theme="dark"] body {
-    background: linear-gradient(135deg, #1f1c2c 0%, #198754 100%);
+    background: linear-gradient(135deg, #1f1c2c 0%, #2d3748 100%);
 }
 
 /* Alternative light mode gradients - uncomment to use different styles */
@@ -525,7 +525,28 @@ input.form-control {
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'dashboard' %}">Budget App</a>
+
+        <!-- Toggle button for mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <!-- Navigation Menu -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'dashboard' %}">📊 Budget</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">📝 Splitwise</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">💸 Taxes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">👤 Friends</a>
+                </li>
+            </ul>
             
             <!-- Right side items -->
             <div class="d-flex align-items-center">
@@ -585,44 +606,6 @@ input.form-control {
                 localStorage.setItem('bsTheme', 'light');
             }
         });
-    });
-
-    // Smooth Scrolling Script
-    document.addEventListener('DOMContentLoaded', function() {
-        let scrollTarget = window.scrollY;
-        let currentScroll = window.scrollY;
-        let isScrolling = false;
-        
-        window.addEventListener('wheel', function(e) {
-            e.preventDefault();
-            
-            // Adjust scroll speed (lower = smoother, try 0.3-0.8)
-            scrollTarget += e.deltaY * 0.8;
-            
-            scrollTarget = Math.max(0, Math.min(scrollTarget, 
-                document.documentElement.scrollHeight - window.innerHeight));
-            
-            if (!isScrolling) {
-                isScrolling = true;
-                smoothScrollAnimation();
-            }
-        }, { passive: false });
-        
-        function smoothScrollAnimation() {
-            const diff = scrollTarget - currentScroll;
-            const ease = 1; // Lower = smoother (try 0.05-0.2)
-            
-            currentScroll += diff * ease;
-            window.scrollTo(0, currentScroll);
-            
-            if (Math.abs(diff) > 0.5) {
-                requestAnimationFrame(smoothScrollAnimation);
-            } else {
-                currentScroll = scrollTarget;
-                window.scrollTo(0, currentScroll);
-                isScrolling = false;
-            }
-        }
     });
     </script>
 </body>

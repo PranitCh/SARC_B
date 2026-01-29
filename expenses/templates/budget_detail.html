@@ -3,9 +3,6 @@
 
 {% block content %}
 <div class="container mt-4">
-    <div class="mb-4">
-        <a href="{% url 'dashboard' %}" class="btn btn-secondary">← Back to Dashboard</a>
-    </div>
 
     <!-- Budget Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -55,6 +52,7 @@
                                 <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirmDelete(event)">🗑️</button>
                             </form>
                         </div>
+                        <small class="text-muted">Created: {{ goal.created_date|date:"M d, Y" }}</small>
                         <div class="mt-2">
                             Saved: ${{ goal.saved }} / ${{ goal.target }}
                             {% if goal.is_achieved %}
@@ -79,6 +77,102 @@
             <p class="text-muted">No goals yet.</p>
         {% endfor %}
     </div>
+
+    <!--Subscriptions Section-->
+
+<h3>Subscriptions</h3>
+
+<!-- Button (instead of inline add form) -->
+<button type="button" class="btn btn-success mb-4"
+        data-bs-toggle="modal" data-bs-target="#addSubModal">
+  Add subscription
+</button>
+
+<!-- Cards grid (same style as Goals) -->
+<div class="row mb-4">
+  {% for sub in subscriptions %}
+    <div class="col-md-6 mb-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <h6 class="mb-1">{{ sub.name }}</h6>
+
+            <form method="post" class="d-inline">
+              {% csrf_token %}
+              <button type="submit"
+                      class="btn btn-sm btn-outline-danger"
+                      name="delete_sub"
+                      value="{{ sub.id }}"
+                      onclick="return confirmDelete()">
+                🗑️
+              </button>
+            </form>
+          </div>
+
+          {% if sub.created_at %}
+            <small class="text-muted">Created: {{ sub.created_at|date:"M d, Y" }}</small>
+          {% endif %}
+
+          <div class="mt-2">
+            Amount: ${{ sub.amount }} • Billing day: {{ sub.billing_day }}
+            {% if not sub.is_active %}
+              <span class="badge bg-secondary ms-2">Inactive</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-muted mb-4">No subscriptions yet.</p>
+  {% endfor %}
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="addSubModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="save_sub" value="1">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Add subscription</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label" for="{{ sub_form.name.id_for_label }}"></label>
+            {{ sub_form.name }}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="{{ sub_form.amount.id_for_label }}"></label>
+            {{ sub_form.amount }}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="{{ sub_form.billing_day.id_for_label }}"></label>
+            {{ sub_form.billing_day }}
+            <div class="form-text">Tip: use 1–28 to avoid month issues.</div>
+          </div>
+
+          <div class="form-check">
+            {{ sub_form.is_active }}
+            <label class="form-check-label" for="{{ sub_form.is_active.id_for_label }}">Active</label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
 
     <!-- Transactions Section -->
     <h3>Transactions</h3>
@@ -134,6 +228,7 @@
                     <th>Description</th>
                     <th>Amount</th>
                     <th>Type</th>
+                    <th>Date</th>
                     <th></th>
                 </tr>
             </thead>
@@ -147,6 +242,7 @@
                                 {% if trans.is_income %}Income{% else %}Expense{% endif %}
                             </span>
                         </td>
+                        <td>{{ trans.date|date:"M d, Y" }}</td>
                         <td>
                             <form method="post" class="d-inline">
                                 {% csrf_token %}
@@ -161,5 +257,8 @@
     {% else %}
         <div class="text-center text-muted py-4">No transactions yet</div>
     {% endif %}
+    <div class="mb-4">
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">← Back to Dashboard</a>
+    </div>
 </div>
 {% endblock %}

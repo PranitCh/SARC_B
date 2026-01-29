@@ -4,25 +4,92 @@
 from django.shortcuts import render, get_object_or_404, redirect  
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.contrib.auth import login
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login, authenticate
 from django.db.models import Sum
 from django.utils import timezone
-from .models import Budget, Goal, Transaction
-from .forms import BudgetForm, GoalForm, TransactionForm
+from .models import Budget, Goal, Transaction, Subscription
+from .forms import BudgetForm, GoalForm, TransactionForm, SubscriptionForm, CustomUserCreationForm, CustomAuthenticationForm
 from decimal import Decimal
+import random
 
+def user_login(request):
+    form = CustomAuthenticationForm()
+    if request.method == 'POST':
+        form = CustomAuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                print(f"User logged in: {username}")
+                return redirect('home')
+        else:
+            messages.error(request, 'Invalid username or password')
+    
+    return render(request, 'login.html', {'form': form})
 
 def register(request):
-    form_data = UserCreationForm()
+    form_data = CustomUserCreationForm()
     if request.method == 'POST':
-        form_data = UserCreationForm(request.POST)
+        form_data = CustomUserCreationForm(request.POST)
         if form_data.is_valid():
             user = form_data.save()
             login(request, user)
             print("new user registered:", user.username)
             return redirect('dashboard')
     return render(request, 'register.html', {'form': form_data})
+
+@login_required
+def home_dashboard(request):
+    quotes = [
+        {
+            'text': "The secret of getting ahead is getting started.",
+            'author': "Mark Twain",
+            'emoji': "💡"
+        },
+        {
+            'text': "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+            'author': "Winston Churchill",
+            'emoji': "🎯"
+        },
+        {
+            'text': "The only way to do great work is to love what you do.",
+            'author': "Steve Jobs",
+            'emoji': "❤️"
+        },
+        {
+            'text': "Believe you can and you're halfway there.",
+            'author': "Theodore Roosevelt",
+            'emoji': "⭐"
+        },
+        {
+            'text': "Don't watch the clock; do what it does. Keep going.",
+            'author': "Sam Levenson",
+            'emoji': "⏰"
+        },
+        {
+            'text': "The best time to plant a tree was 20 years ago. The second best time is now.",
+            'author': "Chinese Proverb",
+            'emoji': "🌱"
+        },
+        {
+            'text': "Your limitation—it's only your imagination.",
+            'author': "Unknown",
+            'emoji': "✨"
+        },
+        {
+            'text': "Great things never come from comfort zones.",
+            'author': "Unknown",
+            'emoji': "🚀"
+        },
+    ]
+    
+    daily_quote = random.choice(quotes)
+    
+    return render(request, 'home_dashboard.html', {
+        'quote': daily_quote
+    })
 
 @login_required
 def toggle_dark_mode(request):
@@ -62,6 +129,9 @@ def budget_detail(request, pk):
     budget_form = BudgetForm(instance=budget_obj)
     goal_form = GoalForm()
     trans_form = TransactionForm()
+
+    subs = Subscription.objects.filter(budget=budget_obj).order_by('-id')
+    sub_form = SubscriptionForm()
     
     print(f"Loading {budget_obj.name} (pk={pk})")
     
@@ -149,6 +219,39 @@ def budget_detail(request, pk):
             messages.info(request, 'Transaction deleted')
             return redirect('budget_detail', pk=pk)
     
+        # add subscription
+        if request.POST.get('save_sub'):
+            print("ADD SUBSCRIPTION")
+            temp_sub_form = SubscriptionForm(request.POST)
+
+            if temp_sub_form.is_valid():
+                sub = temp_sub_form.save(commit=False)
+                sub.budget = budget_obj
+                sub.save()
+                messages.success(request, 'Subscription added!')
+            else:
+                print("SUB ERRORS:", temp_sub_form.errors)
+                messages.error(request, 'Subscription not added (invalid form).')
+
+            return redirect('budget_detail', pk=pk)
+
+# delete subscription
+        if request.POST.get('delete_sub'):
+            sub_id = request.POST.get('delete_sub')
+            print("DELETE SUB ID:", sub_id)
+
+            deleted_count, _ = Subscription.objects.filter(id=sub_id, budget=budget_obj).delete()
+            print("DELETED COUNT:", deleted_count)
+
+            if deleted_count:
+                messages.info(request, 'Subscription deleted')
+            else:
+                messages.error(request, 'Nothing deleted (id/budget mismatch)')
+
+            return redirect('budget_detail', pk=pk)
+
+
+
     # calculating totals
     inc_amt = transactions.filter(is_income=True).aggregate(Sum('amount'))['amount__sum'] or 0
     exp_amt = transactions.filter(is_income=False).aggregate(Sum('amount'))['amount__sum'] or 0
@@ -164,6 +267,8 @@ def budget_detail(request, pk):
         'total_income': inc_amt,
         'total_expenses': exp_amt,
         'net_amount': net_amt,
+        'subscriptions': subs,
+        'sub_form': sub_form,
     }
     
     return render(request, 'budget_detail.html', context)

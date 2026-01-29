@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section with Greeting and Quote -->
+    <div class="row min-vh-100 align-items-center">
+        <div class="col-lg-10 mx-auto">
+            <!-- Greeting -->
+            <div class="text-center mb-5">
+                <h1 class="display-3 mb-3" style="font-weight: 800;">
+                    Hello, {{ user.username }}!
+                </h1>
+            </div>
+
+            <!-- Motivational Quote Card -->
+            <div class="card mb-5" style="background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.3);">
+                <div class="card-body text-center p-5">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;"></div>
+                    <blockquote class="blockquote mb-0">
+                        <p class="fs-4 mb-3" style="font-style: italic; font-weight: 500;">
+                            "The secret of getting ahead is getting started. The secret of getting started is breaking your complex overwhelming tasks into small manageable tasks, and then starting on the first one."
+                        </p>
+                        <footer class="blockquote-footer">Mark Twain</footer>
+                    </blockquote>
+                </div>
+            </div>
+
+            <!-- App Cards Grid -->
+            <div class="row g-4 mb-5">
+                <!-- Budget App -->
+                <div class="col-md-6 col-lg-4">
+                    <a href="{% url 'dashboard' %}" class="text-decoration-none">
+                        <div class="card h-100 text-center app-card">
+                            <div class="card-body p-4">
+                                <div style="font-size: 4rem; margin-bottom: 1rem;">📊</div>
+                                <h3 class="mb-3">Budget Tracker</h3>
+                                <p class="text-muted">Manage your finances and track expenses</p>
+                                <span class="btn btn-primary mt-3">Open App →</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Todo App -->
+                <div class="col-md-6 col-lg-4">
+                    <a href="#" class="text-decoration-none">
+                        <div class="card h-100 text-center app-card">
+                            <div class="card-body p-4">
+                                <div style="font-size: 4rem; margin-bottom: 1rem;">📝</div>
+                                <h3 class="mb-3">Splitwise</h3>
+                                <p class="text-muted">Keep a track of pending transactions</p>
+                                <span class="btn btn-outline-primary mt-3">Coming Soon</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Calendar App -->
+                <div class="col-md-6 col-lg-4">
+                    <a href="#" class="text-decoration-none">
+                        <div class="card h-100 text-center app-card">
+                            <div class="card-body p-4">
+                                <div style="font-size: 4rem; margin-bottom: 1rem;">💸</div>
+                                <h3 class="mb-3">Taxes</h3>
+                                <p class="text-muted">Easily calculate your taxes</p>
+                                <span class="btn btn-outline-primary mt-3">Coming Soon</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* App Card Hover Effect */
+.app-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.app-card:hover {
+    transform: translateY(-10px);
+}
+
+[data-bs-theme="dark"] .app-card {
+    background: rgba(45, 55, 72, 0.6) !important;
+}
+
+/* Quote Card Dark Mode */
+[data-bs-theme="dark"] .card {
+    background: rgba(45, 55, 72, 0.8) !important;
+}
+
+/* Blockquote styling */
+blockquote p {
+    color: #2d3748;
+}
+
+[data-bs-theme="dark"] blockquote p {
+    color: #e9ecef;
+}
+</style>
+{% endblock %}
