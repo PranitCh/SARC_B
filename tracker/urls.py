@@ -19,6 +19,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('expenses.urls')),  # Your app URLs
-    path('accounts/', include('django.contrib.auth.urls')),  # ADD THIS LINE
+    path('accounts/', include('django.contrib.auth.urls')),
+    path("splitwise/", include("splitwise.urls")),
+    path('', include('expenses.urls')),
 ]

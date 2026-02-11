@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}{{ group.name }} · Splitwise{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="mb-1">{{ group.name }}</h1>
+      <p class="text-muted mb-0">Track who paid what and who owes whom.</p>
+    </div>
+    <div class="btn-group">
+      <a href="{% url 'splitwise:add_member' group.id %}" class="btn btn-outline-secondary">
+        ➕ Add member
+      </a>
+      <a href="{% url 'splitwise:add_expense' group.id %}" class="btn btn-outline-primary">
+        💸 Add expense
+      </a>
+      <a href="{% url 'splitwise:settle' group.id %}" class="btn btn-outline-success">
+        ✅ Settle
+      </a>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-5">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="h5 mb-3">Net balances</h3>
+          <ul class="list-group list-group-flush">
+            {% for b in balances %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ b.user.username }}</span>
+                {% if b.net > 0 %}
+                  <span class="badge bg-success rounded-pill">+{{ b.net|floatformat:2 }}</span>
+                {% elif b.net < 0 %}
+                  <span class="badge bg-danger rounded-pill">{{ b.net|floatformat:2 }}</span>
+                {% else %}
+                  <span class="badge bg-secondary rounded-pill">0.00</span>
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-7">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="h5 mb-3">Who owes whom</h3>
+          {% if payments %}
+            <ul class="list-group list-group-flush">
+              {% for p in payments %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <span>
+                    <strong>{{ p.from.username }}</strong>
+                    owes
+                    <strong>{{ p.to.username }}</strong>
+                  </span>
+                  <span class="badge bg-primary rounded-pill">
+                    {{ p.amount|floatformat:2 }}
+                  </span>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="text-muted mb-0">No outstanding debts between members.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

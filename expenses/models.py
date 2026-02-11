@@ -50,5 +50,13 @@ class Subscription(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    transaction = models.OneToOneField(
+        'Transaction',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='subscription'
+    )
+
     def __str__(self):
         return f"{self.name} - {self.amount}"

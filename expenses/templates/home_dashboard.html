@@ -30,26 +30,26 @@
                 <!-- Budget App -->
                 <div class="col-md-6 col-lg-4">
                     <a href="{% url 'dashboard' %}" class="text-decoration-none">
-                        <div class="card h-100 text-center app-card">
-                            <div class="card-body p-4">
+                        <div class="card h-100 text-center app-card d-flex flex-column">
+                            <div class="card-body p-4 d-flex flex-column">
                                 <div style="font-size: 4rem; margin-bottom: 1rem;">📊</div>
                                 <h3 class="mb-3">Budget Tracker</h3>
                                 <p class="text-muted">Manage your finances and track expenses</p>
-                                <span class="btn btn-primary mt-3">Open App →</span>
+                                <span class="btn btn-primary mt-auto">Open App →</span>
                             </div>
                         </div>
                     </a>
                 </div>
 
-                <!-- Todo App -->
+                <!-- Splitwise App -->
                 <div class="col-md-6 col-lg-4">
-                    <a href="#" class="text-decoration-none">
-                        <div class="card h-100 text-center app-card">
-                            <div class="card-body p-4">
+                    <a href="{% url 'splitwise:dashboard' %}" class="text-decoration-none">
+                        <div class="card h-100 text-center app-card d-flex flex-column">
+                            <div class="card-body p-4 d-flex flex-column">
                                 <div style="font-size: 4rem; margin-bottom: 1rem;">📝</div>
-                                <h3 class="mb-3">Splitwise</h3>
-                                <p class="text-muted">Keep a track of pending transactions</p>
-                                <span class="btn btn-outline-primary mt-3">Coming Soon</span>
+                                <h3 class="mb3">Splitwise</h3>
+                                <p class="text-muted">Keep track of shared expenses</p>
+                                <span class="btn btn-primary mt-auto">Open App →</span>
                             </div>
                         </div>
                     </a>
@@ -58,12 +58,12 @@
                 <!-- Calendar App -->
                 <div class="col-md-6 col-lg-4">
                     <a href="#" class="text-decoration-none">
-                        <div class="card h-100 text-center app-card">
-                            <div class="card-body p-4">
+                        <div class="card h-100 text-center app-card d-flex flex-column">
+                            <div class="card-body p-4 d-flex flex-column">
                                 <div style="font-size: 4rem; margin-bottom: 1rem;">💸</div>
                                 <h3 class="mb-3">Taxes</h3>
                                 <p class="text-muted">Easily calculate your taxes</p>
-                                <span class="btn btn-outline-primary mt-3">Coming Soon</span>
+                                <span class="btn btn-outline-primary mt-auto">Coming Soon</span>
                             </div>
                         </div>
                     </a>

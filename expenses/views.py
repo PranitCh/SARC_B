@@ -27,7 +27,7 @@ def user_login(request):
         else:
             messages.error(request, 'Invalid username or password')
     
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'registration/login.html', {'form': form})
 
 def register(request):
     form_data = CustomUserCreationForm()
@@ -235,21 +235,24 @@ def budget_detail(request, pk):
 
             return redirect('budget_detail', pk=pk)
 
-# delete subscription
-        if request.POST.get('delete_sub'):
-            sub_id = request.POST.get('delete_sub')
-            print("DELETE SUB ID:", sub_id)
+# delete subscription (+ its linked transaction)
+        if request.POST.get("delete_sub"):
+            sub_id = request.POST.get("delete_sub")
 
-            deleted_count, _ = Subscription.objects.filter(id=sub_id, budget=budget_obj).delete()
-            print("DELETED COUNT:", deleted_count)
+            sub = Subscription.objects.filter(id=sub_id, budget=budget_obj).first()
+            if not sub:
+                messages.error(request, "Subscription not found.")
+                return redirect("budget_detail", pk=pk)
 
-            if deleted_count:
-                messages.info(request, 'Subscription deleted')
-            else:
-                messages.error(request, 'Nothing deleted (id/budget mismatch)')
+    # If subscription has a linked transaction id, try deleting it (safe even if already deleted)
+            if sub.transaction_id:
+                Transaction.objects.filter(id=sub.transaction_id, budget=budget_obj).delete()
 
-            return redirect('budget_detail', pk=pk)
+    # Always delete the subscription itself
+            sub.delete()
 
+            messages.info(request, "Subscription deleted.")
+            return redirect("budget_detail", pk=pk)
 
 
     # calculating totals

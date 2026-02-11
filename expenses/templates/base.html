@@ -533,20 +533,28 @@ input.form-control {
         
         <!-- Navigation Menu -->
         <div class="collapse navbar-collapse" id="navbarNav">
+            {% with current_app=request.resolver_match.app_name current_view=request.resolver_match.url_name %}
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link active" href="{% url 'dashboard' %}">📊 Budget</a>
+                    <a class="nav-link {% if current_view == 'home' %}active{% endif %}"
+                       href="{% url 'home' %}">🏠 Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">📝 Splitwise</a>
+                    <a class="nav-link {% if current_view == 'dashboard' %}active{% endif %}"
+                       href="{% url 'dashboard' %}">📊 Budget</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if current_app == 'splitwise' %}active{% endif %}"
+                       href="{% url 'splitwise:dashboard' %}">📝 Splitwise</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">💸 Taxes</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">👤 Friends</a>
+                    <a class="nav-link" href="{% url 'splitwise:friends_list' %}">👤 Friends</a>
                 </li>
             </ul>
+            {% endwith %}
             
             <!-- Right side items -->
             <div class="d-flex align-items-center">

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Friends · Splitwise{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h1 class="h4 mb-3">Your friends</h1>
+          <ul class="list-group list-group-flush">
+            {% for f in friends %}
+              <li class="list-group-item d-flex align-items-center">
+                <span class="me-2">👤</span> {{ f.username }}
+              </li>
+            {% empty %}
+              <li class="list-group-item text-muted">
+                You don't have any friends added yet.
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h2 class="h5 mb-3">Incoming requests</h2>
+          <ul class="list-group list-group-flush">
+            {% for fr in incoming %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ fr.from_user.username }}</span>
+                <div class="btn-group btn-group-sm">
+                  <a href="{% url 'splitwise:respond_friend_request' fr.id 'accept' %}" class="btn btn-success">
+                    Accept
+                  </a>
+                  <a href="{% url 'splitwise:respond_friend_request' fr.id 'decline' %}" class="btn btn-outline-secondary">
+                    Decline
+                  </a>
+                </div>
+              </li>
+            {% empty %}
+              <li class="list-group-item text-muted">
+                No incoming requests.
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-body">
+          <h2 class="h5 mb-3">Outgoing requests</h2>
+          <ul class="list-group list-group-flush">
+            {% for fr in outgoing %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ fr.to_user.username }}</span>
+                <span class="badge bg-warning text-dark">Pending</span>
+              </li>
+            {% empty %}
+              <li class="list-group-item text-muted">
+                No outgoing requests.
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h2 class="h5 mb-3">Send friend request</h2>
+          <form method="post" action="{% url 'splitwise:send_friend_request' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label class="form-label">Username or email</label>
+              <input
+                type="text"
+                name="identifier"
+                class="form-control"
+                placeholder="Enter username or email"
+                required
+              >
+            </div>
+            <button type="submit" class="btn btn-primary">
+              Send request
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
