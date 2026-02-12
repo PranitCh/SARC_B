@@ -98,6 +98,6 @@ class SubscriptionForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Description'}),
             'amount': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'placeholder': 'Amount'}),
-            'billing_day': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 28, 'billing-day': 'Billing days'}),
+            'billing_day': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 12, 'billing-day': 'Billing days'}),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
