@@ -42,9 +42,9 @@ INSTALLED_APPS = [
     "splitwise.apps.SplitwiseConfig",
 ]
 
-LOGIN_URL = 'login'
+LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'login'
+LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -58,6 +58,15 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'tracker.urls'
+
+CACHES = {
+  "default": {
+    "BACKEND": "django_redis.cache.RedisCache",
+    "LOCATION": "redis://127.0.0.1:6379/1",
+    "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
+    "TIMEOUT": 300,  # default 5 min
+  }
+}
 
 TEMPLATES = [
     {
@@ -83,9 +92,7 @@ import dj_database_url
 
 
 DATABASES = {
-    "default": dj_database_url.config(
-        default="sqlite:///db.sqlite3", conn_max_age=600, ssl_require=False
-    )
+    "default": dj_database_url.config(default="sqlite:///db.sqlite3", conn_max_age=600)
 }
 
 
