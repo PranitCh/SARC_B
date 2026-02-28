@@ -14,16 +14,16 @@
 
             <!-- Motivational Quote Card -->
             <div class="card mb-5" style="background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.3);">
-                <div class="card-body text-center p-5">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;"></div>
-                    <blockquote class="blockquote mb-0">
-                        <p class="fs-4 mb-3" style="font-style: italic; font-weight: 500;">
-                            "The secret of getting ahead is getting started. The secret of getting started is breaking your complex overwhelming tasks into small manageable tasks, and then starting on the first one."
-                        </p>
-                        <footer class="blockquote-footer">Mark Twain</footer>
-                    </blockquote>
-                </div>
-            </div>
+    <div class="card-body text-center p-5">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">{{ quote.emoji }}</div>
+        <blockquote class="blockquote mb-0">
+            <p class="fs-4 mb-3" style="font-style: italic; font-weight: 500;">
+                "{{ quote.text }}"
+            </p>
+            <footer class="blockquote-footer">{{ quote.author }}</footer>
+        </blockquote>
+    </div>
+</div>
 
             <!-- App Cards Grid -->
             <div class="row g-4 mb-5">

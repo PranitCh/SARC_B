@@ -1,17 +1,16 @@
-from django.urls import path
+from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LogoutView
 from . import views
 
 urlpatterns = [
     path('register/', views.register, name='register'),
-    path('login/', views.user_login, name='login'),  # Change this
+    path('login/', views.user_login, name='login'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
     path('', views.home_dashboard, name='home'),
     path('budgets/', views.dashboard, name='dashboard'),
     path('budget/<int:pk>/', views.budget_detail, name='budget_detail'),
     path('toggle-dark-mode/', views.toggle_dark_mode, name='toggle_dark_mode'),
-
 ]
 
 urlpatterns += [

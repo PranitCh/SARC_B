@@ -16,10 +16,30 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from expenses.views import BudgetViewSet, TransactionViewSet, GoalViewSet, SubscriptionViewSet
+from splitwise.api_views import (
+    SplitGroupViewSet,
+    SplitExpenseViewSet,
+    GroupMemberViewSet,
+    SplitExpenseShareViewSet,
+    FriendRequestViewSet,
+)
+router = DefaultRouter()
+router.register(r'budgets', BudgetViewSet, basename='budeget')
+router.register(r'transactions', TransactionViewSet, basename='transaction')
+router.register(r'goals', GoalViewSet, basename='goal')
+router.register(r'subscriptions', SubscriptionViewSet, basename='subscription')
+router.register(r"splitwise/groups", SplitGroupViewSet, basename="sw-groups")
+router.register(r"splitwise/members", GroupMemberViewSet, basename="sw-members")
+router.register(r"splitwise/expenses", SplitExpenseViewSet, basename="sw-expenses")
+router.register(r"splitwise/shares", SplitExpenseShareViewSet, basename="sw-shares")
+router.register(r"splitwise/friend-requests", FriendRequestViewSet, basename="sw-friend-requests")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path("splitwise/", include("splitwise.urls")),
     path('', include('expenses.urls')),
+    path('api/', include(router.urls)),
+    path("splitwise/", include("splitwise.urls")),
+    path('accounts/', include('django.contrib.auth.urls')),
 ]

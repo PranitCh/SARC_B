@@ -5,25 +5,39 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
+from django.views.decorators.cache import never_cache
 from django.db.models import Sum
+from django.contrib.auth.forms import AuthenticationForm
 from django.utils import timezone
+from rest_framework import viewsets
+from .serializers import BudgetSerializer, TransactionSerializer, GoalSerializer, SubscriptionSerializer
 from .models import Budget, Goal, Transaction, Subscription
 from .forms import BudgetForm, GoalForm, TransactionForm, SubscriptionForm, CustomUserCreationForm, CustomAuthenticationForm
 from decimal import Decimal
 import random
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
 
 def user_login(request):
+    print(f"LOGIN VIEW - Method: {request.method}")
+
     form = CustomAuthenticationForm()
     if request.method == 'POST':
+        print("POST DATA:", request.POST)
         form = CustomAuthenticationForm(request, data=request.POST)
+        print(f"Form valid: {form.is_valid()}")
+
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
+            print(f"Attempting to authenticate: {username}")
             user = authenticate(username=username, password=password)
+            print(f"User object: {user}")
+
             if user is not None:
                 login(request, user)
                 print(f"User logged in: {username}")
-                return redirect('home')
+                return redirect('dashboard')
         else:
             messages.error(request, 'Invalid username or password')
     
@@ -41,6 +55,7 @@ def register(request):
     return render(request, 'register.html', {'form': form_data})
 
 @login_required
+@never_cache
 def home_dashboard(request):
     quotes = [
         {
@@ -86,6 +101,8 @@ def home_dashboard(request):
     ]
     
     daily_quote = random.choice(quotes)
+
+    print(f"🎲 Selected quote: {daily_quote['text'][:30]}... by {daily_quote['author']}")
     
     return render(request, 'home_dashboard.html', {
         'quote': daily_quote
@@ -101,6 +118,7 @@ def toggle_dark_mode(request):
 
 @login_required
 def dashboard(request):
+    print("🚀 DASHBOARD VIEW HIT!")
     budgets = Budget.objects.filter(user=request.user)
     budget_form = BudgetForm()
     
@@ -275,3 +293,52 @@ def budget_detail(request, pk):
     }
     
     return render(request, 'budget_detail.html', context)
+
+class BudgetViewSet(viewsets.ModelViewSet):
+    serializer_class = BudgetSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Budget.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class GoalViewSet(viewsets.ModelViewSet):
+    serializer_class = GoalSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Goal.objects.filter(budget__user=self.request.user)
+
+    def perform_create(self, serializer):
+        budget = serializer.validated_data.get("budget")
+        if budget.user != self.request.user:
+            raise PermissionDenied("Not your budget.")
+        serializer.save()
+
+class TransactionViewSet(viewsets.ModelViewSet):
+    serializer_class = TransactionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Transaction.objects.filter(budget__user=self.request.user)
+
+    def perform_create(self, serializer):
+        budget = serializer.validated_data.get("budget")
+        if budget.user != self.request.user:
+            raise PermissionDenied("Not your budget.")
+        serializer.save()
+
+class SubscriptionViewSet(viewsets.ModelViewSet):
+    serializer_class = SubscriptionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Subscription.objects.filter(budget__user=self.request.user)
+
+    def perform_create(self, serializer):
+        budget = serializer.validated_data.get("budget")
+        if budget.user != self.request.user:
+            raise PermissionDenied("Not your budget.")
+        serializer.save()

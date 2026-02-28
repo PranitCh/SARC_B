@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import Sum, Q
 from django.shortcuts import get_object_or_404, redirect, render
+from .models import SplitGroup, GroupMember, SplitExpense, SplitExpenseShare, FriendRequest
 
 from .forms import CreateGroupForm, SettleForm
 from .models import (

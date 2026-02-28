@@ -60,3 +60,6 @@ class Subscription(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.amount}"
+    
+    def total_cost(self):
+        return self.amount*self.billing_day

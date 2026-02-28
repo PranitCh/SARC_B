@@ -4,6 +4,9 @@
 
 {% block content %}
 <div class="container py-4">
+  <div class="mb-4">
+        <a href="{% url 'splitwise:dashboard' %}" class="btn btn-secondary">← Back to Dashboard</a>
+    </div>
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h1 class="mb-1">{{ group.name }}</h1>

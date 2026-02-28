@@ -114,7 +114,7 @@
           {% endif %}
 
           <div class="mt-2">
-            Amount: ${{ sub.amount }} • Billing day: {{ sub.billing_day }}
+            Amount: ${{ sub.total_cost | floatformat:2 }} • Billing month(s): {{ sub.billing_day }}
             {% if not sub.is_active %}
               <span class="badge bg-secondary ms-2">Inactive</span>
             {% endif %}
@@ -154,7 +154,7 @@
           <div class="mb-3">
             <label class="form-label" for="{{ sub_form.billing_day.id_for_label }}"></label>
             {{ sub_form.billing_day }}
-            <div class="form-text">Tip: use 1–28 to avoid month issues.</div>
+            <div class="form-text">Tip: use 1–12 to avoid month issues.</div>
           </div>
 
           <div class="form-check">
