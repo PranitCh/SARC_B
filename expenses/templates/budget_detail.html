@@ -4,19 +4,21 @@
 {% block content %}
 <div class="container mt-4">
 
-    <!-- Budget Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>{{ budget.name }}</h1>
-        <span class="badge bg-primary fs-6">${{ budget.amount }}</span>
+    <!-- Budget Header (mobile-friendly) -->
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-4">
+        <h1 class="mb-0">{{ budget.name }}</h1>
+        <span class="badge bg-primary fs-6">{{ budget.amount }}</span>
     </div>
 
     <!-- Edit Budget Form -->
     <form method="post" class="mb-4 p-3 border rounded bg-light">
         {% csrf_token %}
         <input type="hidden" name="save_budget" value="1">
-        <div class="row">
-            <div class="col-md-8">{{ budget_form.name }}</div>
-            <div class="col-md-4">
+        <div class="row g-2 align-items-end">
+            <div class="col-12 col-md-8">
+                {{ budget_form.name }}
+            </div>
+            <div class="col-12 col-md-4">
                 <div class="input-group">
                     {{ budget_form.amount }}
                     <button class="btn btn-outline-primary" type="submit">$ Update</button>
@@ -30,10 +32,10 @@
     <form method="post" class="mb-4 p-3 border rounded bg-light">
         {% csrf_token %}
         <input type="hidden" name="save_goal" value="1">
-        <div class="row">
-            <div class="col-md-5">{{ goal_form.name }}</div>
-            <div class="col-md-5">{{ goal_form.target }}</div>
-            <div class="col-md-2">
+        <div class="row g-2 align-items-end">
+            <div class="col-12 col-md-5">{{ goal_form.name }}</div>
+            <div class="col-12 col-md-5">{{ goal_form.target }}</div>
+            <div class="col-12 col-md-2">
                 <button type="submit" class="btn btn-success w-100">Add Goal</button>
             </div>
         </div>
@@ -41,24 +43,27 @@
 
     <div class="row mb-4">
         {% for goal in goals %}
-            <div class="col-md-6 mb-3">
+            <div class="col-12 col-md-6 mb-3">
                 <div class="card {% if goal.is_achieved %}border-success bg-light-success{% endif %}">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <h6>{{ goal.name }}</h6>
+                        <div class="d-flex justify-content-between align-items-start gap-2">
+                            <h6 class="mb-0">{{ goal.name }}</h6>
                             <form method="post" class="d-inline">
                                 {% csrf_token %}
                                 <input type="hidden" name="delete_goal" value="{{ goal.id }}">
                                 <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirmDelete(event)">🗑️</button>
                             </form>
                         </div>
-                        <small class="text-muted">Created: {{ goal.created_date|date:"M d, Y" }}</small>
+
+                        <small class="text-muted d-block mt-1">Created: {{ goal.created_date|date:"M d, Y" }}</small>
+
                         <div class="mt-2">
                             Saved: ${{ goal.saved }} / ${{ goal.target }}
                             {% if goal.is_achieved %}
                                 <span class="badge bg-success ms-2">Achieved! 🎉</span>
                             {% endif %}
                         </div>
+
                         {% if not goal.is_achieved %}
                             <form method="post" class="mt-2">
                                 {% csrf_token %}
@@ -78,123 +83,119 @@
         {% endfor %}
     </div>
 
-    <!--Subscriptions Section-->
+    <!-- Subscriptions Section -->
+    <h3>Subscriptions</h3>
 
-<h3>Subscriptions</h3>
+    <button type="button"
+            class="btn btn-success mb-4 w-100 w-sm-auto"
+            data-bs-toggle="modal" data-bs-target="#addSubModal">
+      Add subscription
+    </button>
 
-<!-- Button (instead of inline add form) -->
-<button type="button" class="btn btn-success mb-4"
-        data-bs-toggle="modal" data-bs-target="#addSubModal">
-  Add subscription
-</button>
+    <div class="row mb-4">
+      {% for sub in subscriptions %}
+        <div class="col-12 col-md-6 mb-3">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start gap-2">
+                <h6 class="mb-1">{{ sub.name }}</h6>
 
-<!-- Cards grid (same style as Goals) -->
-<div class="row mb-4">
-  {% for sub in subscriptions %}
-    <div class="col-md-6 mb-3">
-      <div class="card">
-        <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <h6 class="mb-1">{{ sub.name }}</h6>
+                <form method="post" class="d-inline">
+                  {% csrf_token %}
+                  <button type="submit"
+                          class="btn btn-sm btn-outline-danger"
+                          name="delete_sub"
+                          value="{{ sub.id }}"
+                          onclick="return confirmDelete(event)">
+                    🗑️
+                  </button>
+                </form>
+              </div>
 
-            <form method="post" class="d-inline">
-              {% csrf_token %}
-              <button type="submit"
-                      class="btn btn-sm btn-outline-danger"
-                      name="delete_sub"
-                      value="{{ sub.id }}"
-                      onclick="return confirmDelete()">
-                🗑️
-              </button>
-            </form>
+              {% if sub.created_at %}
+                <small class="text-muted d-block">Created: {{ sub.created_at|date:"M d, Y" }}</small>
+              {% endif %}
+
+              <div class="mt-2">
+                Amount: ${{ sub.total_cost | floatformat:2 }} • Billing month(s): {{ sub.billing_day }}
+                {% if not sub.is_active %}
+                  <span class="badge bg-secondary ms-2">Inactive</span>
+                {% endif %}
+              </div>
+            </div>
           </div>
+        </div>
+      {% empty %}
+        <p class="text-muted mb-4">No subscriptions yet.</p>
+      {% endfor %}
+    </div>
 
-          {% if sub.created_at %}
-            <small class="text-muted">Created: {{ sub.created_at|date:"M d, Y" }}</small>
-          {% endif %}
+    <!-- Modal -->
+    <div class="modal fade" id="addSubModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="save_sub" value="1">
 
-          <div class="mt-2">
-            Amount: ${{ sub.total_cost | floatformat:2 }} • Billing month(s): {{ sub.billing_day }}
-            {% if not sub.is_active %}
-              <span class="badge bg-secondary ms-2">Inactive</span>
-            {% endif %}
-          </div>
+            <div class="modal-header">
+              <h5 class="modal-title">Add subscription</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+              <div class="mb-3">
+                {{ sub_form.name }}
+              </div>
+
+              <div class="mb-3">
+                {{ sub_form.amount }}
+              </div>
+
+              <div class="mb-3">
+                {{ sub_form.billing_day }}
+                <div class="form-text">Tip: use 1–12 to avoid month issues.</div>
+              </div>
+
+              <div class="form-check">
+                {{ sub_form.is_active }}
+                <label class="form-check-label" for="{{ sub_form.is_active.id_for_label }}">Active</label>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+
+          </form>
         </div>
       </div>
     </div>
-  {% empty %}
-    <p class="text-muted mb-4">No subscriptions yet.</p>
-  {% endfor %}
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="addSubModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <form method="post">
-        {% csrf_token %}
-        <input type="hidden" name="save_sub" value="1">
-
-        <div class="modal-header">
-          <h5 class="modal-title">Add subscription</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-
-        <div class="modal-body">
-          <div class="mb-3">
-            <label class="form-label" for="{{ sub_form.name.id_for_label }}"></label>
-            {{ sub_form.name }}
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label" for="{{ sub_form.amount.id_for_label }}"></label>
-            {{ sub_form.amount }}
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label" for="{{ sub_form.billing_day.id_for_label }}"></label>
-            {{ sub_form.billing_day }}
-            <div class="form-text">Tip: use 1–12 to avoid month issues.</div>
-          </div>
-
-          <div class="form-check">
-            {{ sub_form.is_active }}
-            <label class="form-check-label" for="{{ sub_form.is_active.id_for_label }}">Active</label>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save</button>
-        </div>
-
-      </form>
-    </div>
-  </div>
-</div>
-
 
     <!-- Transactions Section -->
     <h3>Transactions</h3>
     <form method="post" class="mb-4 p-3 border rounded bg-light">
         {% csrf_token %}
         <input type="hidden" name="save_trans" value="1">
-        <div class="row">
-            <div class="col-md-5">{{ trans_form.desc }}</div>
-            <div class="col-md-3">{{ trans_form.amount }}</div>
-            <div class="col-md-2 form-check">
-                {{ trans_form.is_income }}
-                <label class="form-check-label">Income</label>
+        <div class="row g-2 align-items-end">
+            <div class="col-12 col-md-5">{{ trans_form.desc }}</div>
+            <div class="col-12 col-md-3">{{ trans_form.amount }}</div>
+            <div class="col-12 col-md-2">
+                <div class="form-check mt-2 mt-md-0">
+                    {{ trans_form.is_income }}
+                    <label class="form-check-label">Income</label>
+                </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-12 col-md-2">
                 <button type="submit" class="btn btn-primary w-100">Add Transaction</button>
             </div>
         </div>
     </form>
 
     <!-- Totals Cards -->
-    <div class="row mb-4">
-        <div class="col-md-4">
+    <div class="row mb-4 g-2">
+        <div class="col-12 col-md-4">
             <div class="card text-center border-success">
                 <div class="card-body">
                     <h5>Income</h5>
@@ -202,7 +203,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-12 col-md-4">
             <div class="card text-center border-danger">
                 <div class="card-body">
                     <h5>Expenses</h5>
@@ -210,18 +211,21 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-12 col-md-4">
             <div class="card text-center {% if net_amount >= 0 %}border-success{% else %}border-warning{% endif %}">
                 <div class="card-body">
                     <h5>Net</h5>
-                    <h3 class="{% if net_amount >= 0 %}text-success{% else %}text-warning{% endif %}">${{ net_amount|floatformat:2 }}</h3>
+                    <h3 class="{% if net_amount >= 0 %}text-success{% else %}text-warning{% endif %}">
+                      ${{ net_amount|floatformat:2 }}
+                    </h3>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Transactions Table -->
+    <!-- Transactions Table (responsive) -->
     {% if transactions %}
+      <div class="table-responsive">
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -254,11 +258,20 @@
                 {% endfor %}
             </tbody>
         </table>
+      </div>
     {% else %}
         <div class="text-center text-muted py-4">No transactions yet</div>
     {% endif %}
+
     <div class="mb-4">
-        <a href="{% url 'dashboard' %}" class="btn btn-secondary">← Back to Dashboard</a>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary w-100 w-sm-auto">← Back to Dashboard</a>
     </div>
 </div>
+
+<style>
+@media (min-width: 576px) {
+  .w-sm-auto { width: auto !important; }
+}
+</style>
+
 {% endblock %}

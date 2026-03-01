@@ -187,7 +187,7 @@ def budget_detail(request, pk):
                 trans_rec = temp_trans_form.save(commit=False)
                 trans_rec.budget = budget_obj
                 trans_rec.save()
-                print(f"TRANS SAVED ID:{trans_rec.id} '{trans_rec.desc}' ${trans_rec.amount}")
+                print(f"TRANS SAVED ID:{trans_rec.id} '{trans_rec.desc}' ₹{trans_rec.amount}")
                 
                 transactions = Transaction.objects.filter(budget=budget_obj).order_by('-id')
                 
@@ -211,8 +211,8 @@ def budget_detail(request, pk):
                     goal = Goal.objects.get(id=goal_id, budget=budget_obj)
                     goal.saved += amount
                     goal.save()
-                    print(f"${amount} to {goal.name} (now ${goal.saved})")
-                    messages.success(request, f'Added ${amount:.2f}!')
+                    print(f"₹{amount} to {goal.name} (now ₹{goal.saved})")
+                    messages.success(request, f'Added ₹{amount:.2f}!')
             except (ValueError, Goal.DoesNotExist):
                 messages.error(request, 'Invalid goal or amount!')
                 print("ADD MONEY ERROR")

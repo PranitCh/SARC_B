@@ -7,6 +7,7 @@
     
     <!-- Bootstrap CSS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script>
 function confirmDelete(event) {
@@ -35,10 +36,12 @@ function confirmDelete(event) {
     <style>
 /* Gradient Background */
 body {
-    background: linear-gradient(135deg, #e9ecef 0%, #c8e6ff 50%, #ffffff 100%);
-    min-height: 100vh;
+  background: radial-gradient(1200px 600px at 20% 10%, rgba(124, 58, 237, 0.10), transparent 55%),
+              radial-gradient(900px 500px at 80% 0%, rgba(59, 130, 246, 0.10), transparent 55%),
+              #f6f7fb;
+  min-height: 100vh;
+  color: #0f172a;
 }
-
 [data-bs-theme="dark"] body {
     background: linear-gradient(135deg, #1f1c2c 0%, #2d3748 100%);
 }
@@ -157,7 +160,7 @@ body {
 
 /* Gradient text for headings */
 h1 {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #32448c 0%, #31154c 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -518,6 +521,67 @@ input.form-control {
 .table td:nth-child(2) {
     font-weight: 600;
     font-size: 1.1rem;
+}
+
+/* ✅ Inputs: visible borders in LIGHT mode */
+[data-bs-theme="light"] .form-control,
+[data-bs-theme="light"] input[type="text"],
+[data-bs-theme="light"] input[type="number"],
+[data-bs-theme="light"] input[type="email"],
+[data-bs-theme="light"] input[type="password"],
+[data-bs-theme="light"] select.form-select,
+[data-bs-theme="light"] textarea.form-control {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border: 1px solid rgba(15, 23, 42, 0.18) !important;
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
+}
+
+/* ✅ Strong, modern focus ring */
+[data-bs-theme="light"] .form-control:focus,
+[data-bs-theme="light"] input:focus,
+[data-bs-theme="light"] select:focus,
+[data-bs-theme="light"] textarea:focus {
+  border-color: rgba(124, 58, 237, 0.55) !important;
+  box-shadow: 0 0 0 0.25rem rgba(124, 58, 237, 0.18) !important;
+  outline: none !important;
+}
+
+/* ✅ Placeholder contrast */
+[data-bs-theme="light"] ::placeholder {
+  color: rgba(15, 23, 42, 0.45) !important;
+}
+
+/* ---------- Mobile layout polish ---------- */
+@media (max-width: 576px) {
+  .container {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .card, .border.rounded {
+    border-radius: 14px !important;
+  }
+
+  h1 { font-size: 1.6rem; }
+  h3 { font-size: 1.2rem; margin-bottom: 1rem; }
+
+  .btn {
+    padding: 10px 14px;
+    border-radius: 12px;
+  }
+
+  /* Forms stack nicely */
+  .row > [class^="col-"] {
+    margin-bottom: .75rem;
+  }
+
+  /* Prevent long headings/labels overflowing */
+  .navbar-text {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 </style>
 </head>

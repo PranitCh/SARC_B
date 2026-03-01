@@ -11,7 +11,7 @@ class Budget(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)  # auto timestamp
     
     def __str__(self):
-        return f"{self.name} - ${self.amount}"
+        return f"{self.name} - ₹{self.amount}"
 
 # goals for saving up stuff
 class Goal(models.Model):
@@ -36,7 +36,7 @@ class Transaction(models.Model):
     date = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
-        return f"{self.desc} ${self.amount}"
+        return f"{self.desc} ₹{self.amount}"
 
 class Subscription(models.Model):
     budget = models.ForeignKey('Budget', on_delete=models.CASCADE, related_name='subscriptions')
