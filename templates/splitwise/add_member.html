@@ -9,14 +9,14 @@
       <div class="card">
         <div class="card-body">
           <h1 class="h4 mb-3">Add member to {{ group.name }}</h1>
-          <p class="text-muted mb-4">
+          <p class="mb-4">
             You can only add users you are friends with. Enter their username or email.
           </p>
 
           <form method="post">
             {% csrf_token %}
             <div class="mb-3">
-              <label class="form-label">Friend identifier</label>
+              <label class="form-label fw-semibold">Friend identifier</label>
               <input
                 type="text"
                 name="identifier"
@@ -26,19 +26,28 @@
               >
             </div>
 
-            <div class="d-flex justify-content-between">
-              <a href="{% url 'splitwise:group_detail' group.id %}" class="btn btn-outline-secondary">
+            <div class="d-flex justify-content-between flex-column flex-sm-row gap-2">
+              <a href="{% url 'splitwise:group_detail' group.id %}"
+                 class="btn btn-outline-secondary w-100 w-sm-auto">
                 Back
               </a>
-              <button type="submit" class="btn btn-primary">
+              <button type="submit"
+                      class="btn btn-primary w-100 w-sm-auto">
                 Add member
               </button>
             </div>
           </form>
+
         </div>
       </div>
     </div>
   </div>
 </div>
-{% endblock %}
 
+<style>
+@media (min-width: 576px) {
+  .w-sm-auto { width: auto !important; }
+}
+</style>
+
+{% endblock %}

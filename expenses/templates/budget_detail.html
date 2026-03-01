@@ -6,7 +6,7 @@
 
     <!-- Budget Header (mobile-friendly) -->
     <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-4">
-        <h1 class="mb-0">{{ budget.name }}</h1>
+        <h3 class="display-6 mb-3" style="font-weight: 800;">{{ budget.name }}</h3>
         <span class="badge bg-primary fs-6">{{ budget.amount }}</span>
     </div>
 
@@ -21,7 +21,7 @@
             <div class="col-12 col-md-4">
                 <div class="input-group">
                     {{ budget_form.amount }}
-                    <button class="btn btn-outline-primary" type="submit">$ Update</button>
+                    <button class="btn btn-outline-primary" type="submit">₹ Update</button>
                 </div>
             </div>
         </div>
@@ -58,7 +58,7 @@
                         <small class="text-muted d-block mt-1">Created: {{ goal.created_date|date:"M d, Y" }}</small>
 
                         <div class="mt-2">
-                            Saved: ${{ goal.saved }} / ${{ goal.target }}
+                            Saved: ₹{{ goal.saved }} / ₹{{ goal.target }}
                             {% if goal.is_achieved %}
                                 <span class="badge bg-success ms-2">Achieved! 🎉</span>
                             {% endif %}
@@ -70,8 +70,8 @@
                                 <input type="hidden" name="goal_id" value="{{ goal.id }}">
                                 <input type="hidden" name="add_money" value="1">
                                 <div class="input-group input-group-sm">
-                                    <input type="number" name="amount" class="form-control" step="0.01" placeholder="Add $" required>
-                                    <button class="btn btn-outline-success" type="submit">Add $</button>
+                                    <input type="number" name="amount" class="form-control" step="0.01" placeholder="Add ₹" required>
+                                    <button class="btn btn-outline-success" type="submit">Add ₹</button>
                                 </div>
                             </form>
                         {% endif %}
@@ -117,7 +117,7 @@
               {% endif %}
 
               <div class="mt-2">
-                Amount: ${{ sub.total_cost | floatformat:2 }} • Billing month(s): {{ sub.billing_day }}
+                Amount: ₹{{ sub.total_cost | floatformat:2 }} • Billing month(s): {{ sub.billing_day }}
                 {% if not sub.is_active %}
                   <span class="badge bg-secondary ms-2">Inactive</span>
                 {% endif %}
@@ -139,7 +139,7 @@
             <input type="hidden" name="save_sub" value="1">
 
             <div class="modal-header">
-              <h5 class="modal-title">Add subscription</h5>
+              <h3 class="modal-title">Add subscription</h3>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
@@ -199,7 +199,7 @@
             <div class="card text-center border-success">
                 <div class="card-body">
                     <h5>Income</h5>
-                    <h3 class="text-success">${{ total_income|floatformat:2 }}</h3>
+                    <h3 class="text-success">₹{{ total_income|floatformat:2 }}</h3>
                 </div>
             </div>
         </div>
@@ -207,7 +207,7 @@
             <div class="card text-center border-danger">
                 <div class="card-body">
                     <h5>Expenses</h5>
-                    <h3 class="text-danger">${{ total_expenses|floatformat:2 }}</h3>
+                    <h3 class="text-danger">₹{{ total_expenses|floatformat:2 }}</h3>
                 </div>
             </div>
         </div>
@@ -216,7 +216,7 @@
                 <div class="card-body">
                     <h5>Net</h5>
                     <h3 class="{% if net_amount >= 0 %}text-success{% else %}text-warning{% endif %}">
-                      ${{ net_amount|floatformat:2 }}
+                      ₹{{ net_amount|floatformat:2 }}
                     </h3>
                 </div>
             </div>
@@ -243,7 +243,7 @@
           {% for trans in transactions %}
             <tr>
               <td>{{ trans.desc }}</td>
-              <td>${{ trans.amount|floatformat:2 }}</td>
+              <td>₹{{ trans.amount|floatformat:2 }}</td>
               <td>
                 <span class="badge {% if trans.is_income %}bg-success{% else %}bg-danger{% endif %}">
                   {% if trans.is_income %}Income{% else %}Expense{% endif %}
@@ -283,7 +283,7 @@
                   <small class="text-muted">{{ trans.date|date:"M d, Y" }}</small>
                 </div>
                 <div class="text-end">
-                  <div class="fw-bold">${{ trans.amount|floatformat:2 }}</div>
+                  <div class="fw-bold">₹{{ trans.amount|floatformat:2 }}</div>
                   <span class="badge {% if trans.is_income %}bg-success{% else %}bg-danger{% endif %}">
                     {% if trans.is_income %}Income{% else %}Expense{% endif %}
                   </span>
