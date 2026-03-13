@@ -10,7 +10,7 @@ class CreateGroupForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": "form-control rounded-pill",
-                "placeholder": "e.g. Trip, Lunch, Gift etc.",
+                "placeholder": "e.g. Trip, Food, Gift etc.",
             }
         ),
     )

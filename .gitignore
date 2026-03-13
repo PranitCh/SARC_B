@@ -1,6 +1,42 @@
+# Python
 __pycache__/
-venv/
-db.sqlite3
-media/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
 env/
+venv/
 .venv/
+
+# Django
+db.sqlite3
+staticfiles/
+media/
+
+# Logs
+*.log
+
+# Environment variables
+.env
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Render
+render.yaml
+
+# Migrations (optional — usually keep them)
+# */migrations/
+# !*/migrations/__init__.py
+
+# Build artifacts
+*.egg-info/
+build/
+dist/

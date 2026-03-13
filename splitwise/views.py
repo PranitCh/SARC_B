@@ -282,8 +282,6 @@ def group_detail(request, group_id):
         for r in paid
     }
 
-    # Per-user net balances and per-pair ledger computed from the same
-    # underlying data so they are always consistent.
     payments, balances = calculate_pairwise_ledger(group, members)
 
     return render(request, "splitwise/group_detail.html", {
