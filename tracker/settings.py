@@ -61,12 +61,11 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'tracker.urls'
 
 CACHES = {
-  "default": {
-    "BACKEND": "django_redis.cache.RedisCache",
-    "LOCATION": "redis://127.0.0.1:6379/1",
-    "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
-    "TIMEOUT": 300,  # default 5 min
-  }
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "budget-app-cache",
+        "TIMEOUT": 300,
+    }
 }
 
 TEMPLATES = [
